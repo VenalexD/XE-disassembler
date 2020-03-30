@@ -6,20 +6,33 @@ Assignment 2, XE Dissasembler
 Filename: dxe.cpp
 */
 
-#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
 
 int main(int argc, char *argv[])
 {
         if(argc == 2)
         {
-                FILE *file = fopen(argv[1], "r");
+                ifstream inFile;
+                string file = argv[1];
+                inFile.open(file);
+                
+                if(!inFile)
+                {
+                        cout << "Unable to open file: " << file << endl;
+                        return -1;
+                }
 
-                fclose(file);
+                inFile.close();
         }
 
         else
         {
-                printf("usage: %s <filename>\n", argv[0]);
+                cout << "Usage: " << argv[0] << " <filename>" << endl;
         }
+        
         return 0;
 }
