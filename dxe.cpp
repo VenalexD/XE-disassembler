@@ -19,15 +19,24 @@ int main(int argc, char *argv[])
         {
                 ifstream inFile;
                 string file = argv[1];  // Assign variable name "file" to second argument (file to be read)
-                inFile.open(file);
+                string objF = file + ".obj";    // Adds obj extension to object file
+                string symF = file + ".sym";    // Adds sym extension to symbol file
+                string sicF = file + ".sic";    // Adds sic extension to source file
+
+                // Creates and opens source file
+                ofstream outFile(sicF);
+
                 
+
+                inFile.open(objF);
+                outFile << "test";
                 // If no file is opened, either does NOT exist or NOT readable
                 if(!inFile)
                 {
                         cout << "Unable to open file: " << file << endl;
                         return -1;      // Exits program
                 }
-
+                outFile.close();
                 inFile.close();
         }
 
