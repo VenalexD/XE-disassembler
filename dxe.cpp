@@ -10,35 +10,71 @@ Filename: dxe.cpp
 #include <fstream>
 #include <string>
 #include <math.h>
+#include <map>
 
 using namespace std;
 
-int hexToDec(unsigned char hex[])
+void buildObjMap(map<int, string> &obj_map)
 {
-        int hexInt[6];  // Holds int values of hex
-        int sum = 0;    // Holds sum of hex values
-        for(int i=0; i<6; i++)
-        {
-                if(hex[i] >= 48 && hex[i] <= 57)
-                {
-                        hexInt[i] = (int) hex[i] - 48;  // Converts char to int value and subtracts 48
-                }
-
-                else if(hex[i] >= 65 && hex[i] <= 70)
-                {
-                        hexInt[i] = (int) hex[i] - 55;  // Converts char to int value and subtracts 55
-                }
-
-                else
-                {
-                        cout << "Invalid Hex value found" << endl;
-                        exit(1);      // Exits program
-                }
-                
-                sum += pow(16, i)*hexInt[i];
-        }
-
-        return sum;
+    obj_map.insert(pair<int, string>(0x18, "ADD"));
+    obj_map.insert(pair<int, string>(0x58, "ADDF"));
+    obj_map.insert(pair<int, string>(0x90, "ADDR"));
+    obj_map.insert(pair<int, string>(0x40, "AND"));
+    obj_map.insert(pair<int, string>(0xB4, "CLEAR2"));
+    obj_map.insert(pair<int, string>(0x28, "COMP"));
+    obj_map.insert(pair<int, string>(0x88, "COMPF"));
+    obj_map.insert(pair<int, string>(0xA0, "COMPR"));
+    obj_map.insert(pair<int, string>(0x24, "DIV"));
+    obj_map.insert(pair<int, string>(0x64, "DIVF"));
+    obj_map.insert(pair<int, string>(0x9C, "DIVR"));
+    obj_map.insert(pair<int, string>(0xC4, "FIX"));
+    obj_map.insert(pair<int, string>(0xC0, "FLOAT"));
+    obj_map.insert(pair<int, string>(0xF4, "HIO"));
+    obj_map.insert(pair<int, string>(0x3C, "J"));
+    obj_map.insert(pair<int, string>(0x30, "JEQ"));
+    obj_map.insert(pair<int, string>(0x34, "JGT"));
+    obj_map.insert(pair<int, string>(0x38, "JLT"));
+    obj_map.insert(pair<int, string>(0x48, "JSUB"));
+    obj_map.insert(pair<int, string>(0x00, "LDA"));
+    obj_map.insert(pair<int, string>(0x68, "LDB"));
+    obj_map.insert(pair<int, string>(0x50, "LDCH"));
+    obj_map.insert(pair<int, string>(0x70, "LDF"));
+    obj_map.insert(pair<int, string>(0x08, "LDL"));
+    obj_map.insert(pair<int, string>(0x6C, "LDS"));
+    obj_map.insert(pair<int, string>(0x74, "LDT"));
+    obj_map.insert(pair<int, string>(0x04, "LDX"));
+    obj_map.insert(pair<int, string>(0xD0, "LPS"));
+    obj_map.insert(pair<int, string>(0x20, "MUL"));
+    obj_map.insert(pair<int, string>(0x60, "MULF"));
+    obj_map.insert(pair<int, string>(0x98, "MULR"));
+    obj_map.insert(pair<int, string>(0xC8, "NORM"));
+    obj_map.insert(pair<int, string>(0x44, "OR"));
+    obj_map.insert(pair<int, string>(0xD8, "RD"));
+    obj_map.insert(pair<int, string>(0xAC, "RMO"));
+    obj_map.insert(pair<int, string>(0x4C, "RSUB"));
+    obj_map.insert(pair<int, string>(0xA4, "SHIFTL"));
+    obj_map.insert(pair<int, string>(0xA8, "SHIFTR"));
+    obj_map.insert(pair<int, string>(0xF0, "SIO"));
+    obj_map.insert(pair<int, string>(0xEC, "SSK"));
+    obj_map.insert(pair<int, string>(0x0C, "STA"));
+    obj_map.insert(pair<int, string>(0x78, "STB"));
+    obj_map.insert(pair<int, string>(0x54, "STCH"));
+    obj_map.insert(pair<int, string>(0x80, "STF"));
+    obj_map.insert(pair<int, string>(0xD4, "STI"));
+    obj_map.insert(pair<int, string>(0x14, "STL"));
+    obj_map.insert(pair<int, string>(0x7C, "STS"));
+    obj_map.insert(pair<int, string>(0xE8, "STSW"));
+    obj_map.insert(pair<int, string>(0x84, "STT"));
+    obj_map.insert(pair<int, string>(0x10, "STX"));
+    obj_map.insert(pair<int, string>(0x1C, "SUB"));
+    obj_map.insert(pair<int, string>(0x5C, "SUBF"));
+    obj_map.insert(pair<int, string>(0x94, "SUBR"));
+    obj_map.insert(pair<int, string>(0xB0, "SVC"));
+    obj_map.insert(pair<int, string>(0xE0, "TD"));
+    obj_map.insert(pair<int, string>(0xF8, "TIO"));
+    obj_map.insert(pair<int, string>(0x2C, "TIX"));
+    obj_map.insert(pair<int, string>(0xB8, "TIXR"));
+    obj_map.insert(pair<int, string>(0xDC, "WD"));
 }
 
 int main(int argc, char *argv[])
@@ -71,15 +107,17 @@ int main(int argc, char *argv[])
                         outFile << c;   // Writes each charatcer to output file
                 }
 
-                unsigned char x[6];       // Int array to hold hex values
+                string hex;     // String to hold hex value
                 // Loops through 6 hex digits of object program starting address
                 for(int j=0; j<6; j++)
                 {
                         inFile.get(c);
-                        x[j] = c;
+                        hex.insert(hex.end(), c); // Inserts hex char to string
                 }
+                
+                int hexDec = stoi(hex, 0, 16);       // Converts hex value to decimal
 
-                outFile << "   START   " << hexToDec(x);
+                outFile << "   START   " << hexDec;     // Writes starting address to output file
 
                 outFile.close();
                 inFile.close();
