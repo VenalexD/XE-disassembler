@@ -14,6 +14,7 @@ Filename: dxe.cpp
 
 using namespace std;
 
+// Function to create map of opcodes and instructions
 void buildObjMap(map<int, string> &obj_map)
 {
     obj_map.insert(pair<int, string>(0x18, "ADD"));
@@ -96,6 +97,10 @@ int main(int argc, char *argv[])
                         return -1;      // Exits program
                 }
 
+                // Creates map of opcodes and instructions
+                map<int, string> opCodes;
+                buildObjMap(opCodes);
+
                 // Creates and opens source file
                 ofstream outFile(sicF);
                 char c; // Placeholder for character being read
@@ -108,6 +113,7 @@ int main(int argc, char *argv[])
                 }
 
                 string hex;     // String to hold hex value
+                int hexDec;     // Int to hold decimal value of hex
                 // Loops through 6 hex digits of object program starting address
                 for(int j=0; j<6; j++)
                 {
@@ -115,9 +121,21 @@ int main(int argc, char *argv[])
                         hex.insert(hex.end(), c); // Inserts hex char to string
                 }
                 
-                int hexDec = stoi(hex, 0, 16);       // Converts hex value to decimal
+                hexDec = stoi(hex, 0, 16);       // Converts hex value to decimal (Starting addres)
 
                 outFile << "   START   " << hexDec;     // Writes starting address to output file
+
+                hex = "";       // Clears hex string to be reused
+                // Loops through next 6 hex digits (Length of program)
+                for(int k=0; k<6; k++)
+                {
+                        inFile.get(c);
+                        hex.insert(hex.end(), c); // Inserts hex char to string
+                }
+
+                hexDec = stoi(hex, 0, 16);      // Converts hex value to decimal (Lenght of program)
+
+
 
                 outFile.close();
                 inFile.close();
