@@ -77,3 +77,25 @@ void dxe::opCodeMap()
         map<int, string> opCodes;
         buildObjMap(opCodes);
 }
+
+void dxe::recordFinder(){
+        for (int i = 0; i < objVector.size(); i++){
+                switch (objVector[i][0]){
+                        case 'H': 
+                                //headerReader(i);
+                                break;
+                        case 'T': 
+                                //textReader(i);
+                                break;
+                        case 'M':
+                                //modReader(i);
+                                break;
+                        case 'E':
+                                //endReader(i);
+                                break;
+                        default:
+                                break;
+                }
+        
+        }
+}
