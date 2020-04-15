@@ -18,7 +18,13 @@ class dxe
     private:
         void storeVector();
         void opCodeMap();
+        void recordFinder();
+        void headerReader();
         vector<string> objVector;
         vector<string> symVector;
+
+        unsigned int programLength;
+        unsigned int currAddress;
+        unsigned int baseAddress;
 
 };
