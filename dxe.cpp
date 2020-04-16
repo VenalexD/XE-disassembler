@@ -5,7 +5,7 @@ Class: CS 530, Spring 2020
 Assignment 2, XE Dissasembler
 Filename: dxe.cpp
 */
-
+#include <iomanip>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -105,6 +105,15 @@ void dxe::headerReader(int textRow){
         //in the header, grab the first 6 characters after the 'H' to get the program name
         string programName = objVector[textRow].substr(1,6);
         stringstream temp;
+
+        //grab the 6 characters in the header record which hold the start address of the program
         unsigned int startAddr = currAddress = (unsigned int)strtol(objVector[textRow].substr(7,6).c_str, NULL, 16);
+        //grab the 6 characters in the header record which hold the length of the program
+        programLength = (unsigned int)strtol(objVector[textRow]substr(13, 6).c_str(), NULL, 16);
+
+        temp << startAddr;
+        string addr = temp.str();
+
+        
 
 }
