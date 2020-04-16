@@ -83,7 +83,7 @@ void dxe::recordFinder()
         for (int i = 0; i < objVector.size(); i++){
                 switch (objVector[i][0]){
                         case 'H': 
-                                //headerReader(i);
+                                headerReader(i);
                                 break;
                         case 'T': 
                                 //textReader(i);
@@ -99,7 +99,7 @@ void dxe::recordFinder()
                 }
         
         }
-}i
+}
 
 void dxe::headerReader(int textRow){
         //in the header, grab the first 6 characters after the 'H' to get the program name
@@ -114,6 +114,9 @@ void dxe::headerReader(int textRow){
         temp << startAddr;
         string addr = temp.str();
 
-        
-
+        //we write out to the .sic stream the program name and the starting address
+        outSic << setw(9) << left << programName << "START   " << addr << endl;
+        //we write out to the .lis file but this time we include addresses and we set the base to Hex
+        outLis << setBase(16) << uppercase << setw(4) << setfill('0') << currAddress << setfill(' ') << "  ";
+        outLis << setw(9) << left << programName << "START  " << addr <<endl;
 }
