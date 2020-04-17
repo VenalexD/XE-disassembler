@@ -5,8 +5,8 @@ Class: CS 530, Spring 2020
 Assignment 2, XE Dissasembler
 Filename: dxe.cpp
 */
-#include <iomanip>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <math.h>
@@ -107,9 +107,9 @@ void dxe::headerReader(int textRow){
         stringstream temp;
 
         //grab the 6 characters in the header record which hold the start address of the program
-        unsigned int startAddr = currAddress = (unsigned int)strtol(objVector[textRow].substr(7,6).c_str, NULL, 16);
+        unsigned int startAddr = currAddress = (unsigned int)strtol(objVector[textRow].substr(7,6).c_str(), NULL, 16);
         //grab the 6 characters in the header record which hold the length of the program
-        programLength = (unsigned int)strtol(objVector[textRow]substr(13, 6).c_str(), NULL, 16);
+        programLength = (unsigned int)strtol(objVector[textRow].substr(13, 6).c_str(), NULL, 16);
 
         temp << startAddr;
         string addr = temp.str();
@@ -117,6 +117,6 @@ void dxe::headerReader(int textRow){
         //we write out to the .sic stream the program name and the starting address
         outSic << setw(9) << left << programName << "START   " << addr << endl;
         //we write out to the .lis file but this time we include addresses and we set the base to Hex
-        outLis << setBase(16) << uppercase << setw(4) << setfill('0') << currAddress << setfill(' ') << "  ";
+        outLis << setbase(16) << uppercase << setw(4) << setfill('0') << currAddress << setfill(' ') << "  ";
         outLis << setw(9) << left << programName << "START  " << addr <<endl;
 }

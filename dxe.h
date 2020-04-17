@@ -6,7 +6,8 @@ Assignment 2, XE Dissasembler
 Filename: dxe.h
 */
 
-#include<iostream>
+#include <iostream>
+#include <iomanip>
 #include <vector>
 #include "opcode.h"
 
@@ -19,7 +20,7 @@ class dxe
         void storeVector();
         void opCodeMap();
         void recordFinder();
-        void headerReader();
+        void headerReader(int);
         vector<string> objVector;
         vector<string> symVector;
 
