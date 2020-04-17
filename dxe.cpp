@@ -7,9 +7,9 @@ Filename: dxe.cpp
 */
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
-#include <math.h>
 #include <map>
 #include "dxe.h"
 
@@ -18,12 +18,12 @@ ifstream inSym;
 ofstream outSic;
 ofstream outLis;
 
-void dxe::openF(char *file)
+void dxe::openF(string file)
 {
-        string objF = *file + ".obj";    // Adds obj extension to object file
-        string symF = *file + ".sym";    // Adds sym extension to symbol file
-        string sicF = *file + ".sic";    // Adds sic extension to source file
-        string lisF = *file + ".lis";    // Adds lis extension to source file
+        string objF = file + ".obj";    // Adds obj extension to object file
+        string symF = file + ".sym";    // Adds sym extension to symbol file
+        string sicF = file + ".sic";    // Adds sic extension to source file
+        string lisF = file + ".lis";    // Adds lis extension to source file
 
         inObj.open(objF);
         // If no .obj file is opened, either does NOT exist or NOT readable
@@ -76,4 +76,48 @@ void dxe::opCodeMap()
         // Creates map of opcodes and instructions
         map<int, string> opCodes;
         buildObjMap(opCodes);
+}
+
+void dxe::recordFinder()
+{
+        for (int i = 0; i < objVector.size(); i++){
+                switch (objVector[i][0]){
+                        case 'H': 
+                                //headerReader(i);
+                                break;
+                        case 'T': 
+                                //textReader(i);
+                                break;
+                        case 'M':
+                                //modReader(i);
+                                break;
+                        case 'E':
+                                //endReader(i);
+                                break;
+                        default:
+                                break;
+                }
+        
+        }
+}
+
+void dxe::headerReader(int textRow)
+{
+        //in the header, grab the first 6 characters after the 'H' to get the program name
+        string programName = objVector[textRow].substr(1,6);
+        stringstream temp;
+
+        //grab the 6 characters in the header record which hold the start address of the program
+        unsigned int startAddr = currAddress = (unsigned int)strtol(objVector[textRow].substr(7,6).c_str(), NULL, 16);
+        //grab the 6 characters in the header record which hold the length of the program
+        programLength = (unsigned int)strtol(objVector[textRow].substr(13, 6).c_str(), NULL, 16);
+
+        temp << startAddr;
+        string addr = temp.str();
+
+        //we write out to the .sic stream the program name and the starting address
+        outSic << setw(9) << left << programName << "START   " << addr << endl;
+        //we write out to the .lis file but this time we include addresses and we set the base to Hex
+        outLis << setbase(16) << uppercase << setw(4) << setfill('0') << currAddress << setfill(' ') << "  ";
+        outLis << setw(9) << left << programName << "START  " << addr <<endl;
 }
