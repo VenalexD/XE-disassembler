@@ -6,19 +6,31 @@ Assignment 2, XE Dissasembler
 Filename: dxe.h
 */
 
+#ifndef DXE_H
+#define DXE_H
+
 #include<iostream>
+#include <iomanip>
 #include <vector>
 #include "opcode.h"
 
 class dxe
 {
     public:
-        void openF(char *file);
+        void openF(string file);
 
     private:
         void storeVector();
         void opCodeMap();
+        void recordFinder();
+        void headerReader(int);
         vector<string> objVector;
         vector<string> symVector;
 
+        unsigned int programLength;
+        unsigned int currAddress;
+        unsigned int baseAddress;
+
 };
+
+#endif
