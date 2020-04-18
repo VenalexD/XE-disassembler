@@ -18,11 +18,11 @@ class dxe
 {
     public:
         void openF(string file);
+        void recordFinder();
 
     private:
         void storeVector();
         void opCodeMap();
-        void recordFinder();
         void headerReader(int);
         vector<string> objVector;
         vector<string> symVector;

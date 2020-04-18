@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
             // Instantiates XED form dxe class
             dxe XED;
             XED.openF(argv[1]); // Calls open function with command line argument
+            XED.recordFinder();
         }
 
         else
