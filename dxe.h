@@ -6,7 +6,14 @@ Assignment 2, XE Dissasembler
 Filename: dxe.h
 */
 
+<<<<<<< HEAD
 #include <iostream>
+=======
+#ifndef DXE_H
+#define DXE_H
+
+#include<iostream>
+>>>>>>> master
 #include <iomanip>
 #include <vector>
 #include "opcode.h"
@@ -14,7 +21,7 @@ Filename: dxe.h
 class dxe
 {
     public:
-        void openF(char *file);
+        void openF(string file);
 
     private:
         void storeVector();
@@ -29,3 +36,5 @@ class dxe
         unsigned int baseAddress;
 
 };
+
+#endif
