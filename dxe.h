@@ -24,8 +24,13 @@ class dxe
         void storeVector();
         void opCodeMap();
         void headerReader(int);
-        vector<string> objVector;
-        vector<string> symVector;
+        void modReader(int);
+        void endReader(int);
+
+        vector<string> objVector; //where we load each record
+        vector<string> symVector; //where we load each symbol
+        vector<string> namVector;
+        vector<unsigned int> valVector; 
 
         unsigned int programLength;
         unsigned int currAddress;
