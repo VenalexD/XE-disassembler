@@ -70,20 +70,20 @@ void dxe::storeVector()
                 symVector.push_back(buffer);    // Stores .sym file contents into vector
         }
 }
-
+/*
 void dxe::opCodeMap()
 {
         // Creates map of opcodes and instructions
         map<int, string> opCodes;
         buildObjMap(opCodes);
-}
+}*/
 
 void dxe::recordFinder()
 {
         for (int i = 0; i < objVector.size(); i++){
                 switch (objVector[i][0]){
                         case 'H': 
-                                //headerReader(i);
+                                headerReader(i);
                                 break;
                         case 'T': 
                                 //textReader(i);
