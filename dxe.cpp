@@ -77,17 +77,8 @@ void dxe::opCodeMap()
         buildObjMap(opCodes);
 }
 
-<<<<<<< HEAD
-void dxe::recordFinder()
-{
-=======
-<<<<<<< HEAD
+
 void dxe::recordFinder(){
-=======
-void dxe::recordFinder()
-{
->>>>>>> e4970e04e5c97c0f74d3be4392ea251fff928d61
->>>>>>> master
         for (int i = 0; i < objVector.size(); i++){
                 switch (objVector[i][0]){
                         case 'H': 
@@ -107,19 +98,10 @@ void dxe::recordFinder()
                 }
         
         }
-<<<<<<< HEAD
 }
 
 void dxe::headerReader(int textRow){
-=======
-<<<<<<< HEAD
 }
-=======
-}
-
-void dxe::headerReader(int textRow)
-{
->>>>>>> master
         //in the header, grab the first 6 characters after the 'H' to get the program name
         string programName = objVector[textRow].substr(1,6);
         stringstream temp;
@@ -137,9 +119,4 @@ void dxe::headerReader(int textRow)
         //we write out to the .lis file but this time we include addresses and we set the base to Hex
         outLis << setbase(16) << uppercase << setw(4) << setfill('0') << currAddress << setfill(' ') << "  ";
         outLis << setw(9) << left << programName << "START  " << addr <<endl;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> e4970e04e5c97c0f74d3be4392ea251fff928d61
->>>>>>> master

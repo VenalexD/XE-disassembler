@@ -6,14 +6,7 @@ Assignment 2, XE Dissasembler
 Filename: dxe.h
 */
 
-<<<<<<< HEAD
 #include <iostream>
-=======
-#ifndef DXE_H
-#define DXE_H
-
-#include<iostream>
->>>>>>> master
 #include <iomanip>
 #include <vector>
 #include "opcode.h"
