@@ -121,3 +121,32 @@ void dxe::headerReader(int textRow)
         outLis << setbase(16) << uppercase << setw(4) << setfill('0') << currAddress << setfill(' ') << "  ";
         outLis << setw(9) << left << programName << "START  " << addr <<endl;
 }
+void dxe::modificationReader(int textRow){     //M XXXXXX YY
+
+	int i = 0;
+	unsigned int addressT = 0;
+               //finds the first text record
+	while (objStorage[i][0] != 'T') {   
+	       i++;
+	}
+	addressT = (unsigned int)strtol(objStorage[i].substr(1, 6).c_str(), NULL, 16);  //store text start address at addressT as a long
+
+		// Grab the 6 chars after the 'M' which is the starting address of the field to be modified
+	unsigned int modificationAddress = ( unsigned int)strtol( objStorage[textRow].substr(1,6).c_str(), NULL, 16);
+
+		//takes in the length of the address to be modified
+        int modificationLength = (int)strtol(objStorage[textRow].substr(7, 2).c_str(), NULL, 16);
+
+
+		//find text record that contains the address to modify
+        while (addressT < modificationLength) {
+	       addressT += (unsigned int)strtol(objStorage[i].substr(7, 2).c_str(), NULL, 16);
+	       i++;
+        }
+	    
+	i--;
+	addressT -= (unsigned int)strtol(objStorage[i].substr(7, 2).c_str(), NULL, 16);
+	int position = 2 * (modificationAddress - addressT) + 10;
+	objStorage[i][position] += progLength;
+
+}
