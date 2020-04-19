@@ -6,8 +6,8 @@ Assignment 2, XE Dissasembler
 Filename: opcode.h
 */
 
-#ifndef __a2__C_____opcode__
-#define __a2__C_____opcode__
+#ifndef OPCODE_H
+#define OPCODE_H
 
 #include <stdio.h>
 #include <iostream>
@@ -25,4 +25,4 @@ public:
     int 	getFormat(int opCode);
     bool 	getBit(int input, int position);
 };
-#endif /* defined(__a2__C_____OpCode__) */
+#endif

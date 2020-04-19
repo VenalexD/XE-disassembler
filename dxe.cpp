@@ -146,10 +146,10 @@ int dxe::formatFinder(int currRow, int currPlace){
 }
 
 void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) { 
-    string opName = code.getOpName(currInst);
+    string opName = instTable.getName(currInst);
 
     for (int i = 0; i < valVector.size() - 1; i++) { //check if symbol name should be inserted
-        if (currentAddress == valVector[i]) {  //currentAddress
+        if (currAddress == valVector[i]) {  //currentAddress
             outSic << setw(8) << left << namVector[i];
             outLis << setw(8) << left << namVector[i];
             break;
@@ -160,8 +160,35 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
         }
     }
 
+    for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
+        if (currAddress == (strtol(litTable[i].substr(24, 6).c_str(), NULL, 16))) {
+            outSic << setw(10) << left << litTable[i].substr(8, 6) << endl;
+            outSic << setw(14) << right << "LTORG" << endl;
+            outLis << setw(10) << left << litTable[i].substr(8, 6) << endl;
+            outLis << setw(14) << right << "LTORG" << endl;
+            return;
+        }
+    }
+}
+
+
+void dxe::format2(opcode instTable, int currInst, int CurrRow, int currPlace) {
+    string opName = code.getOpName(opCode);
+
+    for (int i = 0; i < valVector.size()-1; i++) { //check if symbol name should be inserted
+        if (currentAddress == valVector[i]) {
+        	outSic<< setw(8) << left << namVector[i];
+            outLis << setw(8) << left << namVector[i];
+            break;
+        }
+        else if (i+1 >= valVector.size()-1) {
+            outSic << "         " << setw(7) << left << opName;
+            outLis << "         " << setw(7) << left << opName;
+        }
+    }
+
     for (int i = 0; i < litNames.size(); i++) { //check if literal should be inserted
-        if (currAddress == litAddresses[i]) {    //Lit variables need to be checked cause i couldnt see if we had variables for that yet
+        if (currentAddress == litAddresses[i]) {
             outSic << setw(10) << left << litNames[i] << endl;
             outSic << setw(14) << right << "LTORG" << endl;
             outLis << setw(10) << left << litNames[i] << endl;
@@ -169,7 +196,75 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
             return;
         }
     }
+    int r1 = (int)strtol(objStorage[row].substr(current+2, 1).c_str(), NULL, 16);
+    int r2 = (int)strtol(objStorage[row].substr(current+3, 1).c_str(), NULL, 16);
+
+    switch (r1) {           //output register name for first register operand
+        case 0:
+        	outSic << "A,";
+            outLis << "A,";
+            break;
+        case 1:
+            outSic << "X,";
+            outLis << "X,";
+            break;
+        case 2:
+            outSic << "L,";
+            outLis << "L,";
+            break;
+        case 3:
+            outSic << "B,";
+            outLis << "B,";
+            break;
+        case 4:
+            outSic << "S,";
+            outLis << "S,";
+            break;
+        case 5:
+            outSic << "T,";
+            outLis << "T,";
+            break;
+        case 6:
+            outSic << "F,";
+            outLis << "F,";
+            break;
+        default:
+            break;
+    }
+    switch (r2) {           //output register name for 2nd operand
+        case 0:
+            outSic << "A" << endl;
+            outLis << "A" << endl;
+            break;
+        case 1:
+            outSic << "X" << endl;
+            outLis << "X" << endl;
+            break;
+        case 2:
+            outSic << "L" << endl;
+            outLis << "L" << endl;
+            break;
+        case 3:
+            outSic << "B" << endl;
+            outLis << "B" << endl;
+            break;
+        case 4:
+            outSic << "S" << endl;
+            outLis << "S" << endl;
+            break;
+        case 5:
+            outSic << "T" << endl;
+            outLis << "T" << endl;
+            break;
+        case 6:
+            outSic << "F" << endl;
+            outLis << "F" << endl;
+            break;
+        default:
+            break;
+    }
 }
+
 
 void dxe::headerReader(int textRow)
 {
@@ -207,11 +302,15 @@ void dxe::textReader(int textRow){
 
 void dxe::checkSymTab(){
         for (int i =0; i < symTable.size(); i++){
+<<<<<<< HEAD
                 //fetch the address of the ith symbol in the Symbol Table
                 unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16));
                 //fetch the name of the ith symbol in the Symbol Table
                 string symName = symTable[i].substr(0,6);
                 //check if the current address is the same as a symbol in the Symbol Table
+=======
+                unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16);
+>>>>>>> c32d0c0470a3278ef3581012b5d74f568bdfbb6d
                 if(currAddress <= symAddr)
                         outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << "  ";
                         if ((currAddress % 3)){
