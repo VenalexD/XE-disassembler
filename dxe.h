@@ -34,6 +34,9 @@ class dxe
         vector<string> objVector; //where we load each record
         vector<string> symVector; //where we load each symbol
 
+        vector<string> symTable;    // Where we load each line of sym table
+        vector<string> litTable;    // Where we load each line of lit table
+
         vector<string> namVector;
         vector<unsigned int> valVector;
 

@@ -64,10 +64,31 @@ void dxe::storeVector()
                 objVector.push_back(buffer);    // Stores .obj file contents into vector
         }
 
+        string buffer2;
         while(inSym.good())
         {
-                getline(inSym, buffer);
-                symVector.push_back(buffer);    // Stores .sym file contents into vector
+                getline(inSym, buffer2);
+                getline(inSym, buffer2);
+                getline(inSym, buffer2);
+                while(buffer2.length() != 0)
+                {
+                        symTable.push_back(buffer2);    // Stores symbol table lines into vector
+                        getline(inSym, buffer2);
+                }
+
+
+        }
+
+        while(inSym.good())
+        {
+                getline(inSym, buffer2);
+                getline(inSym, buffer2);
+                getline(inSym, buffer2);
+                while(buffer2.length() != 0)
+                {
+                        litTable.push_back(buffer2);    // Stores symbol table lines into vector
+                        getline(inSym, buffer2);
+                }      
         }
 }
 
