@@ -117,9 +117,7 @@ void dxe::recordFinder()
         }
 }
 
-
 int dxe::formatFinder(int currRow, int currPlace){
-
         //instatiate a new instruction table
         opcode instructTable = *new opcode;
         int flagReturn;
@@ -209,17 +207,42 @@ void dxe::textReader(int textRow){
 
 void dxe::checkSymTab(){
         for (int i =0; i < symTable.size(); i++){
+                //fetch the address of the ith symbol in the Symbol Table
                 unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16));
+                //fetch the name of the ith symbol in the Symbol Table
+                string symName = symTable[i].substr(0,6);
+                //check if the current address is the same as a symbol in the Symbol Table
                 if(currAddress <= symAddr)
                         outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << "  ";
                         if ((currAddress % 3)){
-                                outSic << setw(8) << left << symTable[i].substr(0,6);
-                                outLis << setw(8) << left << symTable[i].subxtr(0,6);
+                                outSic << setw(8) << left << symName << " RESW    ";
+                                outLis << setw(8) << left << symName << " RESW    ";
+
                                 if(i+1 < symTable.size()){
-                                        outSic << set(8) << left << (symTable[i+1])
+                                        outSic << set(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr)/3 << endl;
+                                        outLis << setbase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr)/3 << setbase(16) << endl;
+                                        currAddress += (unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16) - symAddr;
+                                }
+                                else{
+                                        outSic << setw(8) << left << (programLength - symAddr)/3 < endl;
+                                        outLis << setbase(10) << setw(8) << left << (programLength - symAddr)/3 << setbase(16) << endl;
+                                        currAddress += (programLength - symAddr);
                                 }
                         }
-
+                        else{
+                                outSic << setw(8) << left << symName << " RESB    ";
+                                outLis << setw(8) << left << symName << " RESB    ";
+                                if( i+1 < symTable.size()){
+                                        outSic << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr) << setbase(16) << endl;
+                                        outLis << setbase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr) << setbase(16) << endl;
+                                        currAddress += ((((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr))/3;
+                                }
+                                else{
+                                        outSic << setw(8) << left << (programLength - symAddr)/3 << endl;
+                                        outLis << setBase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr) << setbase(16) << endl;
+                                        currAddress += (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr) / 3;
+                                }
+                        }
         }
 }
 void dxe::modReader(int textRow){     //M XXXXXX YY
@@ -249,7 +272,6 @@ void dxe::modReader(int textRow){     //M XXXXXX YY
 	addressT -= (unsigned int)strtol(objVector[i].substr(7, 2).c_str(), NULL, 16);
 	int position = 2 * (modificationAddress - addressT) + 10;
 	objVector[i][position] += programLength;
-
 }
 
 void dxe::endReader(int textRow) {
