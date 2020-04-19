@@ -26,11 +26,13 @@ class dxe
         void headerReader(int);
         void modReader(int);
         void endReader(int);
+        void formatFinder(int,int);
 
         vector<string> objVector; //where we load each record
         vector<string> symVector; //where we load each symbol
+
         vector<string> namVector;
-        vector<unsigned int> valVector; 
+        vector<unsigned int> valVector;
 
         unsigned int programLength;
         unsigned int currAddress;

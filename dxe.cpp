@@ -70,6 +70,7 @@ void dxe::storeVector()
                 symVector.push_back(buffer);    // Stores .sym file contents into vector
         }
 }
+
 /*
 void dxe::opCodeMap()
 {
@@ -89,16 +90,22 @@ void dxe::recordFinder()
                                 //textReader(i);
                                 break;
                         case 'M':
-                                //modReader(i);
+                                modReader(i);
                                 break;
                         case 'E':
-                                //endReader(i);
+                                endReader(i);
                                 break;
                         default:
                                 break;
                 }
         
         }
+}
+
+
+void dxe::formatFinder(int currRow, int currPlace){
+        opcode instTable = *new opcode;
+        //int currInst = (int)strtol(objVector[currRow].)
 }
 
 void dxe::headerReader(int textRow)
@@ -152,10 +159,14 @@ void dxe::modReader(int textRow){     //M XXXXXX YY
 }
 
 void dxe::endReader(int textRow) {
+    // sets end address equal to our object vector with 16 length
     unsigned int eAddress = (unsigned int)strtol(objVector[textRow].substr(1, 6).c_str(), NULL, 16);
-    for (int i = 0; i < valVector.size(); i++) //check the symbol Vector table for the address of the front instruction
+    //check the symbol value vector table for the address of the front instruction
+    for (int i = 0; i < valVector.size(); i++)
         if (eAddress == valVector[i]) {
-            outSic << "         " << setw(8) << left << "END" << namVector[i] << endl;        //end reader for Symbol Names
+            //makes room in the Sic stream for the next packet on information
+            outSic << "         " << setw(8) << left << "END" << namVector[i] << endl;
+            //makes room in the Lis stream for the next packet on information
             outLis << "               " << setw(8) << left << "END" << namVector[i] << endl;
             break;
         }
