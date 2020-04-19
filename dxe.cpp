@@ -148,13 +148,13 @@ int dxe::formatFinder(int currRow, int currPlace){
 void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) { 
     string opName = instTable.getName(currInst);
 
-    for (int i = 0; i < valVector.size() - 1; i++) { //check if symbol name should be inserted
-        if (currAddress == valVector[i]) {  //currentAddress
-            outSic << setw(8) << left << namVector[i];
-            outLis << setw(8) << left << namVector[i];
+    for (int i = 0; i < symTable.size() - 1; i++) { //check if symbol name should be inserted
+        if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {  //currAddress
+            outSic << setw(8) << left << symTable[i].substr(0,6);
+            outLis << setw(8) << left << symTable[i].substr(0,6);
             break;
         }
-        else if (i + 1 >= valVector.size() - 1) {
+        else if (i + 1 >= symTable.size() - 1) {
             outSic << "         " << setw(7) << left << opName;  //not sure on opName
             outLis << "         " << setw(7) << left << opName;
         }
@@ -173,22 +173,22 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
 
 
 void dxe::format2(opcode instTable, int currInst, int CurrRow, int currPlace) {
-    string opName = code.getOpName(opCode);
+    string opName = instTable.getName(currInst);
 
-    for (int i = 0; i < valVector.size()-1; i++) { //check if symbol name should be inserted
-        if (currentAddress == valVector[i]) {
-        	outSic<< setw(8) << left << namVector[i];
-            outLis << setw(8) << left << namVector[i];
+    for (int i = 0; i < symTable.size()-1; i++) { //check if symbol name should be inserted
+        if (currAddress == symTable[i]) {
+        	outSic<< setw(8) << left << symTable[i].substr(0,6);
+            outLis << setw(8) << left << symTable[i].substr(0,6);
             break;
         }
-        else if (i+1 >= valVector.size()-1) {
+        else if (i+1 >= symTable.size()-1) {
             outSic << "         " << setw(7) << left << opName;
             outLis << "         " << setw(7) << left << opName;
         }
     }
 
-    for (int i = 0; i < litNames.size(); i++) { //check if literal should be inserted
-        if (currentAddress == litAddresses[i]) {
+    for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
+        if (currAddress == litAddresses[i]) {
             outSic << setw(10) << left << litNames[i] << endl;
             outSic << setw(14) << right << "LTORG" << endl;
             outLis << setw(10) << left << litNames[i] << endl;
@@ -302,15 +302,12 @@ void dxe::textReader(int textRow){
 
 void dxe::checkSymTab(){
         for (int i =0; i < symTable.size(); i++){
-<<<<<<< HEAD
                 //fetch the address of the ith symbol in the Symbol Table
                 unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16));
                 //fetch the name of the ith symbol in the Symbol Table
                 string symName = symTable[i].substr(0,6);
                 //check if the current address is the same as a symbol in the Symbol Table
-=======
                 unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16);
->>>>>>> c32d0c0470a3278ef3581012b5d74f568bdfbb6d
                 if(currAddress <= symAddr)
                         outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << "  ";
                         if ((currAddress % 3)){
@@ -377,12 +374,12 @@ void dxe::endReader(int textRow) {
     // sets end address equal to our object vector with 16 length
     unsigned int eAddress = (unsigned int)strtol(objVector[textRow].substr(1, 6).c_str(), NULL, 16);
     //check the symbol value vector table for the address of the front instruction
-    for (int i = 0; i < valVector.size(); i++) 
-        if (eAddress == valVector[i]) {
+    for (int i = 0; i < symTable.size(); i++) 
+        if (eAddress == symTable[i]) {
             //makes room in the Sic stream for the next packet on information
-            outSic << "         " << setw(8) << left << "END" << namVector[i] << endl;
+            outSic << "         " << setw(8) << left << "END" << symTable[i].substr(0,6) << endl;
             //makes room in the Lis stream for the next packet on information
-            outLis << "               " << setw(8) << left << "END" << namVector[i] << endl;
+            outLis << "               " << setw(8) << left << "END" << symTable[i].substr(0,6) << endl;
             break;
         }
 }

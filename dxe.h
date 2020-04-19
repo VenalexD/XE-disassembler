@@ -30,16 +30,14 @@ class dxe
         void endReader(int);
         int formatFinder(int,int);
         void format1(opcode,int,int,int);
+        void format2(opcode,int,int,int);
 
         vector<string> objVector; //where we load each record
         vector<string> symVector; //where we load each symbol
 
         vector<string> symTable;    // Where we load each line of sym table
         vector<string> litTable;    // Where we load each line of lit table
-
-        vector<string> namVector;
-        vector<unsigned int> valVector;
-
+          
         unsigned int programLength;
         unsigned int currAddress;
         unsigned int baseAddress;
