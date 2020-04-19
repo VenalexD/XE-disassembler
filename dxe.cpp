@@ -104,8 +104,32 @@ void dxe::recordFinder()
 
 
 void dxe::formatFinder(int currRow, int currPlace){
+
+        //instatiate a new instruction table
         opcode instTable = *new opcode;
-        //int currInst = (int)strtol(objVector[currRow].)
+        int flagReturn;
+        //pull the first two bytes from the current row and the current place.
+        int currInst = (int)strtol(objVector[currRow].substr(currPlace,2).c_str(),NULL,16);
+        
+        //call the .getFormat table from the instruction table class to fetch the format of the instruction
+        int instFormat = instTable.getFormat(currInst);
+        
+        //output the instruction address to the .lis file
+        outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << " ";
+
+        //this switch case will pick the right format disassembler
+        switch(instFormat) {
+                case 1:
+                        format1(instTable, currInst, currRow, currPlace);
+                        break;
+                case 2: 
+                        //format2(instTable, currInst, currRow, currPlace);
+                        break;
+                case 3:
+                        //flagReturn = format3(instTable, currInst, currRow, currPlace);
+                        break;
+        }
+        return (flagReturn * 2)
 }
 
 void dxe::headerReader(int textRow)
