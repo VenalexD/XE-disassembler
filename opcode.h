@@ -6,8 +6,8 @@ Assignment 2, XE Dissasembler
 Filename: opcode.h
 */
 
-#ifndef __a2__C_____OpCode__
-#define __a2__C_____OpCode__
+#ifndef __a2__C_____opcode__
+#define __a2__C_____opcode__
 
 #include <stdio.h>
 #include <iostream>
@@ -19,7 +19,7 @@ Filename: opcode.h
 
 using namespace std;
 
-class code {
+class opcode {
 public:
     string 	getName(int opCode);
     int 	getFormat(int opCode);
