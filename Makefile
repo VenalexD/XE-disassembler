@@ -18,4 +18,6 @@ $(EXEC):$(FILES)
 
 clean:
 	rm -f *.o $(EXEC)
+
+.PHONY: all dxe clean
 #######################[ EOF: Makefile ]###################
