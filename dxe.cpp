@@ -148,10 +148,10 @@ int dxe::formatFinder(int currRow, int currPlace){
 }
 
 void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) { 
-    string opName = code.getOpName(currInst);
+    string opName = instTable.getName(currInst);
 
     for (int i = 0; i < valVector.size() - 1; i++) { //check if symbol name should be inserted
-        if (currentAddress == valVector[i]) {  //currentAddress
+        if (currAddress == valVector[i]) {  //currentAddress
             outSic << setw(8) << left << namVector[i];
             outLis << setw(8) << left << namVector[i];
             break;
@@ -162,11 +162,11 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
         }
     }
 
-    for (int i = 0; i < litNames.size(); i++) { //check if literal should be inserted
-        if (currAddress == litAddresses[i]) {    //Lit variables need to be checked cause i couldnt see if we had variables for that yet
-            outSic << setw(10) << left << litNames[i] << endl;
+    for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
+        if (currAddress == (strtol(litTable[i].substr(24, 6).c_str(), NULL, 16))) {
+            outSic << setw(10) << left << litTable[i].substr(8, 6) << endl;
             outSic << setw(14) << right << "LTORG" << endl;
-            outLis << setw(10) << left << litNames[i] << endl;
+            outLis << setw(10) << left << litTable[i].substr(8, 6) << endl;
             outLis << setw(14) << right << "LTORG" << endl;
             return;
         }
@@ -209,7 +209,7 @@ void dxe::textReader(int textRow){
 
 void dxe::checkSymTab(){
         for (int i =0; i < symTable.size(); i++){
-                unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16));
+                unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16);
                 if(currAddress <= symAddr)
                         outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << "  ";
                         if ((currAddress % 3)){
