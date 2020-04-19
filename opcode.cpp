@@ -7,67 +7,47 @@ Filename: opcode.cpp
 */
 
 #include "opcode.h"
+#define SIZE 59
 
-// Function to create map of opcodes and instructions
-void buildObjMap(map<int, string> &obj_map)
-{
-    obj_map.insert(pair<int, string>(0x18, "ADD"));
-    obj_map.insert(pair<int, string>(0x58, "ADDF"));
-    obj_map.insert(pair<int, string>(0x90, "ADDR"));
-    obj_map.insert(pair<int, string>(0x40, "AND"));
-    obj_map.insert(pair<int, string>(0xB4, "CLEAR2"));
-    obj_map.insert(pair<int, string>(0x28, "COMP"));
-    obj_map.insert(pair<int, string>(0x88, "COMPF"));
-    obj_map.insert(pair<int, string>(0xA0, "COMPR"));
-    obj_map.insert(pair<int, string>(0x24, "DIV"));
-    obj_map.insert(pair<int, string>(0x64, "DIVF"));
-    obj_map.insert(pair<int, string>(0x9C, "DIVR"));
-    obj_map.insert(pair<int, string>(0xC4, "FIX"));
-    obj_map.insert(pair<int, string>(0xC0, "FLOAT"));
-    obj_map.insert(pair<int, string>(0xF4, "HIO"));
-    obj_map.insert(pair<int, string>(0x3C, "J"));
-    obj_map.insert(pair<int, string>(0x30, "JEQ"));
-    obj_map.insert(pair<int, string>(0x34, "JGT"));
-    obj_map.insert(pair<int, string>(0x38, "JLT"));
-    obj_map.insert(pair<int, string>(0x48, "JSUB"));
-    obj_map.insert(pair<int, string>(0x00, "LDA"));
-    obj_map.insert(pair<int, string>(0x68, "LDB"));
-    obj_map.insert(pair<int, string>(0x50, "LDCH"));
-    obj_map.insert(pair<int, string>(0x70, "LDF"));
-    obj_map.insert(pair<int, string>(0x08, "LDL"));
-    obj_map.insert(pair<int, string>(0x6C, "LDS"));
-    obj_map.insert(pair<int, string>(0x74, "LDT"));
-    obj_map.insert(pair<int, string>(0x04, "LDX"));
-    obj_map.insert(pair<int, string>(0xD0, "LPS"));
-    obj_map.insert(pair<int, string>(0x20, "MUL"));
-    obj_map.insert(pair<int, string>(0x60, "MULF"));
-    obj_map.insert(pair<int, string>(0x98, "MULR"));
-    obj_map.insert(pair<int, string>(0xC8, "NORM"));
-    obj_map.insert(pair<int, string>(0x44, "OR"));
-    obj_map.insert(pair<int, string>(0xD8, "RD"));
-    obj_map.insert(pair<int, string>(0xAC, "RMO"));
-    obj_map.insert(pair<int, string>(0x4C, "RSUB"));
-    obj_map.insert(pair<int, string>(0xA4, "SHIFTL"));
-    obj_map.insert(pair<int, string>(0xA8, "SHIFTR"));
-    obj_map.insert(pair<int, string>(0xF0, "SIO"));
-    obj_map.insert(pair<int, string>(0xEC, "SSK"));
-    obj_map.insert(pair<int, string>(0x0C, "STA"));
-    obj_map.insert(pair<int, string>(0x78, "STB"));
-    obj_map.insert(pair<int, string>(0x54, "STCH"));
-    obj_map.insert(pair<int, string>(0x80, "STF"));
-    obj_map.insert(pair<int, string>(0xD4, "STI"));
-    obj_map.insert(pair<int, string>(0x14, "STL"));
-    obj_map.insert(pair<int, string>(0x7C, "STS"));
-    obj_map.insert(pair<int, string>(0xE8, "STSW"));
-    obj_map.insert(pair<int, string>(0x84, "STT"));
-    obj_map.insert(pair<int, string>(0x10, "STX"));
-    obj_map.insert(pair<int, string>(0x1C, "SUB"));
-    obj_map.insert(pair<int, string>(0x5C, "SUBF"));
-    obj_map.insert(pair<int, string>(0x94, "SUBR"));
-    obj_map.insert(pair<int, string>(0xB0, "SVC"));
-    obj_map.insert(pair<int, string>(0xE0, "TD"));
-    obj_map.insert(pair<int, string>(0xF8, "TIO"));
-    obj_map.insert(pair<int, string>(0x2C, "TIX"));
-    obj_map.insert(pair<int, string>(0xB8, "TIXR"));
-    obj_map.insert(pair<int, string>(0xDC, "WD"));
+//Creates a structure of opCodes with a format of {NAME, OPCODE, FORMAT of operation}
+struct code {
+    string name;
+    int format; //format 3 is actually format 3/4,  but this will be decided in the main program
+    int opCode;
+};
+
+const struct code instTable [] = {				//structure of usable commands
+    {"ADD", 3, 0x18 },  {"ADDF", 3, 0x58},   {"ADDR", 2, 0x90},   {"AND", 3, 0x40},  {"CLEAR", 2, 0xB4},
+    {"COMP", 3, 0x28}, {"COMPF", 3, 0x88},  {"COMPR", 2, 0xA0},  {"DIV", 3, 0x24},  {"DIVF", 3, 0x64},
+    {"DIVR", 2, 0x9C}, {"FIX", 1, 0xC4},    {"FLOAT", 1, 0xC0},  {"HIO", 1, 0xF4},  {"J", 3, 0x3C},
+    {"JEQ", 3, 0x30},  {"JGT", 3 0x34},    {"JLT", 3, 0x38},    {"JSUB", 3, 0x48}, {"LDA", 3, 0x00},
+    {"LDB", 3, 0x68},  {"LDCH", 3, 0x50},   {"LDF", 3, 0x70},    {"LDL", 3, 0x08},  {"LDS", 3, 0x6C},
+    {"LDT", 3, 0x74},  {"LDX", 3, 0x04},    {"LPS", 3, 0xD0},    {"MUL", 3, 0x20},  {"MULF", 3, 0x60},
+    {"MULR", 2, 0x98}, {"NORM", 1, 0xC8},   {"OR", 3, 0x44},     {"RD", 3, 0xD8},   {"RMO", 2, 0xAC},
+    {"RSUB", 3, 0x4C}, {"SHIFTL", 2, 0xA4}, {"SHIFTR", 2, 0xA8}, {"SIO", 1, 0xF0},  {"SSK", 3, 0xEC},
+    {"STA", 3, 0x0C},  {"STB", 3, 0x78},    {"STCH", 3, 0x54},   {"STF", 3, 0x80},  {"STI", 3, 0xD4},
+    {"STL", 3, 0x14},  {"STS", 3, 0x7C},    {"STSW", 3, 0xE8},   {"STT", 3, 0x84},  {"STX", 3, 0x10},
+    {"SUB", 3, 0x1C},  {"SUBF", 3, 0x5C},   {"SUBR", 2, 0x94},   {"SVC", 2, 0xB0},  {"TD", 3, 0xE0},
+    {"TIO", 1, 0xF8},  {"TIX", 3, 0x2C},    {"TIXR", 2, 0xB8},   {"WD", 3, 0xDC}
+};
+
+string OpCode::getName(int opCode) {
+    for (int i = 0; i < SIZE; i++)
+        if (instTable[i].opCode == opCode)
+            return instTable[i].name;										//05    0000 0101
+    int newOpCode = opCode & 0xFC;      	//allows us to get the NAME       FC	1111 1100
+    return getOpName(newOpCode);											//00	0000 0000   => LDA, Format 3
 }
+
+int OpCode::getFormat(int opCode) {											//05    0000 0101
+    opCode = opCode & 0xFC;      			//allows us to get the FORMAT     FC	1111 1100
+    for (int i = 0; i < SIZE; i++)										    //04	0000 0100   => LDX, Format 3
+        if (instTable[i].opCode == opCode)
+            return instTable[i].format;
+    return 0;
+}
+
+bool OpCode::getBit(int input, int position) {		//fills nixbpe for format 3/4 in Format 3 function
+    return ((input >> position) & 1);
+}
+
