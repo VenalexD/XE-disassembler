@@ -24,6 +24,8 @@ class dxe
         void storeVector();
         void opCodeMap();
         void headerReader(int);
+        void textReader(int);
+        void checkSymTab();
         void modReader(int);
         void endReader(int);
         int formatFinder(int,int);

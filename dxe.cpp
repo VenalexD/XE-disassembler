@@ -71,6 +71,8 @@ void dxe::storeVector()
         }
 }
 
+//Base on the first value returned in each row of the objVector the record finder will call
+//the corresponding function based on which kind of record it is.
 void dxe::recordFinder()
 {
         for (int i = 0; i < objVector.size(); i++){
@@ -124,6 +126,32 @@ int dxe::formatFinder(int currRow, int currPlace){
         return (flagReturn * 2);
 }
 
+void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) { 
+    string opName = code.getOpName(currInst);
+
+    for (int i = 0; i < valVector.size() - 1; i++) { //check if symbol name should be inserted
+        if (currentAddress == valVector[i]) {  //currentAddress
+            outSic << setw(8) << left << namVector[i];
+            outLis << setw(8) << left << namVector[i];
+            break;
+        }
+        else if (i + 1 >= valVector.size() - 1) {
+            outSic << "         " << setw(7) << left << opName;  //not sure on opName
+            outLis << "         " << setw(7) << left << opName;
+        }
+    }
+
+    for (int i = 0; i < litNames.size(); i++) { //check if literal should be inserted
+        if (currAddress == litAddresses[i]) {    //Lit variables need to be checked cause i couldnt see if we had variables for that yet
+            outSic << setw(10) << left << litNames[i] << endl;
+            outSic << setw(14) << right << "LTORG" << endl;
+            outLis << setw(10) << left << litNames[i] << endl;
+            outLis << setw(14) << right << "LTORG" << endl;
+            return;
+        }
+    }
+}
+
 void dxe::headerReader(int textRow)
 {
         //in the header, grab the first 6 characters after the 'H' to get the program name
@@ -143,6 +171,35 @@ void dxe::headerReader(int textRow)
         //we write out to the .lis file but this time we include addresses and we set the base to Hex
         outLis << setbase(16) << uppercase << setw(4) << setfill('0') << currAddress << setfill(' ') << "  ";
         outLis << setw(9) << left << programName << "START  " << addr <<endl;
+}
+
+void dxe::textReader(int textRow){
+        int textLen = (int)strtol(objVector[textRow].substr(7,2).c_str, NULL, 16);
+        // op codes will always start at least in location 9 on text record
+        int curr = 9;
+        while(curr < (2* textLen + 9)){
+                int size = formatFinder(textRow, curr);
+                currAddress += (size/2);
+                curr += size;
+        }
+
+        checkSymTab();
+}
+
+void dxe::checkSymTab(){
+        for (int i =0; i < symTable.size(); i++){
+                unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16));
+                if(currAddress <= symAddr)
+                        outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << "  ";
+                        if ((currAddress % 3)){
+                                outSic << setw(8) << left << symTable[i].substr(0,6);
+                                outLis << setw(8) << left << symTable[i].subxtr(0,6);
+                                if(i+1 < symTable.size()){
+                                        outSic << set(8) << left << (symTable[i+1])
+                                }
+                        }
+
+        }
 }
 void dxe::modReader(int textRow){     //M XXXXXX YY
 
@@ -178,7 +235,7 @@ void dxe::endReader(int textRow) {
     // sets end address equal to our object vector with 16 length
     unsigned int eAddress = (unsigned int)strtol(objVector[textRow].substr(1, 6).c_str(), NULL, 16);
     //check the symbol value vector table for the address of the front instruction
-    for (int i = 0; i < valVector.size(); i++)
+    for (int i = 0; i < valVector.size(); i++) 
         if (eAddress == valVector[i]) {
             //makes room in the Sic stream for the next packet on information
             outSic << "         " << setw(8) << left << "END" << namVector[i] << endl;
