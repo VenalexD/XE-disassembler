@@ -173,6 +173,101 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
     }
 }
 
+
+void dxe::format2(opcode instTable, int currInst, int CurrRow, int currPlace) {
+    string opName = code.getOpName(opCode);
+
+    for (int i = 0; i < valVector.size()-1; i++) { //check if symbol name should be inserted
+        if (currentAddress == valVector[i]) {
+        	outSic<< setw(8) << left << namVector[i];
+            outLis << setw(8) << left << namVector[i];
+            break;
+        }
+        else if (i+1 >= valVector.size()-1) {
+            outSic << "         " << setw(7) << left << opName;
+            outLis << "         " << setw(7) << left << opName;
+        }
+    }
+
+    for (int i = 0; i < litNames.size(); i++) { //check if literal should be inserted
+        if (currentAddress == litAddresses[i]) {
+            outSic << setw(10) << left << litNames[i] << endl;
+            outSic << setw(14) << right << "LTORG" << endl;
+            outLis << setw(10) << left << litNames[i] << endl;
+            outLis << setw(14) << right << "LTORG" << endl;
+            return;
+        }
+    }
+    int r1 = (int)strtol(objStorage[row].substr(current+2, 1).c_str(), NULL, 16);
+    int r2 = (int)strtol(objStorage[row].substr(current+3, 1).c_str(), NULL, 16);
+
+    switch (r1) {           //output register name for first register operand
+        case 0:
+        	outSic << "A,";
+            outLis << "A,";
+            break;
+        case 1:
+            outSic << "X,";
+            outLis << "X,";
+            break;
+        case 2:
+            outSic << "L,";
+            outLis << "L,";
+            break;
+        case 3:
+            outSic << "B,";
+            outLis << "B,";
+            break;
+        case 4:
+            outSic << "S,";
+            outLis << "S,";
+            break;
+        case 5:
+            outSic << "T,";
+            outLis << "T,";
+            break;
+        case 6:
+            outSic << "F,";
+            outLis << "F,";
+            break;
+        default:
+            break;
+    }
+    switch (r2) {           //output register name for 2nd operand
+        case 0:
+            outSic << "A" << endl;
+            outLis << "A" << endl;
+            break;
+        case 1:
+            outSic << "X" << endl;
+            outLis << "X" << endl;
+            break;
+        case 2:
+            outSic << "L" << endl;
+            outLis << "L" << endl;
+            break;
+        case 3:
+            outSic << "B" << endl;
+            outLis << "B" << endl;
+            break;
+        case 4:
+            outSic << "S" << endl;
+            outLis << "S" << endl;
+            break;
+        case 5:
+            outSic << "T" << endl;
+            outLis << "T" << endl;
+            break;
+        case 6:
+            outSic << "F" << endl;
+            outLis << "F" << endl;
+            break;
+        default:
+            break;
+    }
+}
+
+
 void dxe::headerReader(int textRow)
 {
         //in the header, grab the first 6 characters after the 'H' to get the program name
