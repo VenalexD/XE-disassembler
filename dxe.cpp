@@ -72,7 +72,7 @@ void dxe::storeVector()
                 getline(inSym, buffer2);
                 while(buffer2.length() != 0)
                 {
-                        symTable.push_back(buffer2);    // Stores symbol table lines into vector
+                        symTable.push_back(buffer2);    // Stores symbol table lines into vector//
                         getline(inSym, buffer2);
                 }
 
