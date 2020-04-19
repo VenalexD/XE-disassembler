@@ -6,10 +6,23 @@ Assignment 2, XE Dissasembler
 Filename: opcode.h
 */
 
+#ifndef __a2__C_____OpCode__
+#define __a2__C_____OpCode__
+
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
-#include <map>
+#include <cstdlib>
+#include <vector>
 
 using namespace std;
 
-// Protoype for buildObjMap
-void buildObjMap(map<int, string> &obj_map);
+class code {
+public:
+    string 	getName(int opCode);
+    int 	getFormat(int opCode);
+    bool 	getBit(int input, int position);
+};
+#endif /* defined(__a2__C_____OpCode__) */
