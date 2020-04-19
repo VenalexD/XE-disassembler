@@ -26,7 +26,8 @@ class dxe
         void headerReader(int);
         void modReader(int);
         void endReader(int);
-        void formatFinder(int,int);
+        int formatFinder(int,int);
+        void format1(code,int,int,int);
 
         vector<string> objVector; //where we load each record
         vector<string> symVector; //where we load each symbol

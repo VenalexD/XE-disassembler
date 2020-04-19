@@ -103,10 +103,10 @@ void dxe::recordFinder()
 }
 
 
-void dxe::formatFinder(int currRow, int currPlace){
+int dxe::formatFinder(int currRow, int currPlace){
 
         //instatiate a new instruction table
-        opcode instTable = *new opcode;
+        code instTable = *new code;
         int flagReturn;
         //pull the first two bytes from the current row and the current place.
         int currInst = (int)strtol(objVector[currRow].substr(currPlace,2).c_str(),NULL,16);
@@ -129,7 +129,7 @@ void dxe::formatFinder(int currRow, int currPlace){
                         //flagReturn = format3(instTable, currInst, currRow, currPlace);
                         break;
         }
-        return (flagReturn * 2)
+        return (flagReturn * 2);
 }
 
 void dxe::headerReader(int textRow)
