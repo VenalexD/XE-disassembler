@@ -181,8 +181,8 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
 
 void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
     string opName = instTable.getName(currInst);
-
-    for (int i = 0; i < symTable.size()-1; i++) { //check if symbol name should be inserted
+    // Loops through symTable vector to check if a symbol name matches current address
+    for (int i = 0; i < symTable.size()-1; i++) {
         if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {
             outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
             outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
@@ -193,8 +193,8 @@ void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
             outLis << "         " << setw(7) << left << opName;
         }
     }
-
-    for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
+    // Loops through litTable to check if a literal matches current address
+    for (int i = 0; i < litTable.size(); i++) {
         if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16)) {
             outSic << setw(10) << left <<(unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16)<< endl;
             outSic << setw(14) << right << "LTORG" << endl;
@@ -206,7 +206,7 @@ void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
     int r1 = (int)strtol(objVector[currRow].substr(currPlace+2, 1).c_str(), NULL, 16);
     int r2 = (int)strtol(objVector[currRow].substr(currPlace+3, 1).c_str(), NULL, 16);
 
-    switch (r1) {           //output register name for first register operand
+    switch (r1) {           // Checks value from register 1 to assign name
         case 0:
         	outSic << "A,";
             outLis << "A,";
@@ -238,7 +238,7 @@ void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
         default:
             break;
     }
-    switch (r2) {           //output register name for 2nd operand
+    switch (r2) {           // Checks value from register 2 to assign name
         case 0:
             outSic << "A" << endl;
             outLis << "A" << endl;
@@ -276,11 +276,11 @@ int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
     string opName = instTable.getName(currInst);
     bool nixbpe[6];
     int flagSection = (int)strtol(objVector[currRow].substr(currPlace+1, 2).c_str(), NULL, 16);
-    for (int i = 0; i < 6; i++)           //set flags bits for nixbpe
+    for (int i = 0; i < 6; i++)           // Loops through each flag of nixbpe and assigns value
         nixbpe[i] = instTable.getBit(flagSection, 5-i);
 
     unsigned int instruction = (unsigned int)strtol(objVector[currRow].substr(currPlace, 2*(3+nixbpe[5])).c_str(), NULL, 16);
-    for (int i = 0; i < symTable.size()-1; i++) { //check if symbol name should be inserted
+    for (int i = 0; i < symTable.size()-1; i++) { // Loops through symTable vector to check if a symbol name matches current address
         if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {
             outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
             outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
@@ -292,7 +292,7 @@ int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
         }
     }
 
-    for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
+    for (int i = 0; i < litTable.size(); i++) { // Loops through litTable to check if a literal matches current address
         if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16)) {
             int literal = (int)strtol(objVector[currRow].substr(currPlace+(2*(3+nixbpe[5])), (unsigned int)strtol(litTable[i].substr(16, 6).c_str(), NULL, 16)).c_str(), NULL, 16);
             outSic << (nixbpe[5] ? "+":" "); //insert a "+" if extended format
