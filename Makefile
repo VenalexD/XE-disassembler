@@ -14,7 +14,7 @@ LFLAGS = -lm -o
 CFLAGS = -lm -o
 
 $(EXEC):$(FILES)
-	$(CC) $(FILES) $(LFLAGS) $(EXEC) 
+	$(CC) -std=c++11 $(FILES) $(LFLAGS) $(EXEC) 
 
 clean:
 	rm -f *.o $(EXEC)
