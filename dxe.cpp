@@ -150,8 +150,8 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
 
     for (int i = 0; i < symTable.size() - 1; i++) { //check if symbol name should be inserted
         if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {  //currAddress
-            outSic << setw(8) << left << symTable[i].substr(0,6);
-            outLis << setw(8) << left << symTable[i].substr(0,6);
+            outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16));
+            outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16));
             break;
         }
         else if (i + 1 >= symTable.size() - 1) {
@@ -161,10 +161,10 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
     }
 
     for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
-        if (currAddress == (strtol(litTable[i].substr(24, 6).c_str(), NULL, 16))) {
-            outSic << setw(10) << left << litTable[i].substr(8, 6) << endl;
+        if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16))) {
+            outSic << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16))) << endl;
             outSic << setw(14) << right << "LTORG" << endl;
-            outLis << setw(10) << left << litTable[i].substr(8, 6) << endl;
+            outLis << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16))) << endl;
             outLis << setw(14) << right << "LTORG" << endl;
             return;
         }
@@ -176,9 +176,9 @@ void dxe::format2(opcode instTable, int currInst, int CurrRow, int currPlace) {
     string opName = instTable.getName(currInst);
 
     for (int i = 0; i < symTable.size()-1; i++) { //check if symbol name should be inserted
-        if (currAddress == symTable[i]) {
-        	outSic<< setw(8) << left << symTable[i].substr(0,6);
-            outLis << setw(8) << left << symTable[i].substr(0,6);
+        if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16))) {
+        	outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16));
+            outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16));
             break;
         }
         else if (i+1 >= symTable.size()-1) {
@@ -188,10 +188,10 @@ void dxe::format2(opcode instTable, int currInst, int CurrRow, int currPlace) {
     }
 
     for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
-        if (currAddress == litAddresses[i]) {
-            outSic << setw(10) << left << litNames[i] << endl;
+        if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16))) {
+            outSic << setw(10) << left <<(unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16)))<< endl;
             outSic << setw(14) << right << "LTORG" << endl;
-            outLis << setw(10) << left << litNames[i] << endl;
+            outLis << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16))) << endl;
             outLis << setw(14) << right << "LTORG" << endl;
             return;
         }
