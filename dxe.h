@@ -31,6 +31,7 @@ class dxe
         int formatFinder(int,int);
         void format1(opcode,int,int,int);
         void format2(opcode,int,int,int);
+        int format3(opcode,int,int,int);
 
         vector<string> objVector; //where we load each record
         vector<string> symVector; //where we load each symbol

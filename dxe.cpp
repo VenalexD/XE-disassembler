@@ -136,10 +136,10 @@ int dxe::formatFinder(int currRow, int currPlace){
                         format1(instructTable, currInst, currRow, currPlace);
                         break;
                 case 2: 
-                        //format2(instTable, currInst, currRow, currPlace);
+                        format2(instructTable, currInst, currRow, currPlace);
                         break;
                 case 3:
-                        //flagReturn = format3(instTable, currInst, currRow, currPlace);
+                        flagReturn = format3(instructTable, currInst, currRow, currPlace);
                         break;
         }
         return (flagReturn * 2);
@@ -268,11 +268,11 @@ void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
 int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
     string opName = instTable.getName(currInst);
     bool nixbpe[6];
-    int flagSection = (int)strtol(objStorage[currRow].substr(current+1, 2).c_str(), NULL, 16);
+    int flagSection = (int)strtol(objVector[currRow].substr(currPlace+1, 2).c_str(), NULL, 16);
     for (int i = 0; i < 6; i++)           //set flags bits for nixbpe
         nixbpe[i] = instTable.getBit(flagSection, 5-i);
 
-    unsigned int instruction = (unsigned int)strtol(objStorage[currRow].substr(current, 2*(3+nixbpe[5])).c_str(), NULL, 16);
+    unsigned int instruction = (unsigned int)strtol(objVector[currRow].substr(currPlace, 2*(3+nixbpe[5])).c_str(), NULL, 16);
     for (int i = 0; i < symTable.size()-1; i++) { //check if symbol name should be inserted
         if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {
             outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
@@ -287,7 +287,7 @@ int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
 
     for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
         if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16)) {
-            int literal = (int)strtol(objStorage[currRow].substr(current+(2*(3+nixbpe[5])), (unsigned int)strtol(litTable[i].substr(16, 6).c_str(), NULL, 16)).c_str(), NULL, 16);
+            int literal = (int)strtol(objVector[currRow].substr(currPlace+(2*(3+nixbpe[5])), (unsigned int)strtol(litTable[i].substr(16, 6).c_str(), NULL, 16)).c_str(), NULL, 16);
             outSic << (nixbpe[5] ? "+":" "); //insert a "+" if extended format
             outSic << setw(7) << opName << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16) << endl;
             outSic << setw(14) << right << "LTORG" << endl;
@@ -305,11 +305,11 @@ int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
 
     unsigned int targetAddress = 0;
     if (nixbpe[5]) {                    //check for extended format and put displacement field into targetAddress
-        targetAddress = (unsigned int)strtol(objStorage[currRow].substr(current, 8).c_str(), NULL, 16);
+        targetAddress = (unsigned int)strtol(objVector[currRow].substr(currPlace, 8).c_str(), NULL, 16);
         targetAddress &= 0x000FFFFF;
     }
     else {
-        targetAddress = (unsigned int)strtol(objStorage[currRow].substr(current, 6).c_str(), NULL, 16);
+        targetAddress = (unsigned int)strtol(objVector[currRow].substr(currPlace, 6).c_str(), NULL, 16);
         targetAddress &= 0x000FFF;
     }
 
