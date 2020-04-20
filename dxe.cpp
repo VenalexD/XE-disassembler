@@ -15,8 +15,8 @@ Filename: dxe.cpp
 
 ifstream inObj;
 ifstream inSym;
-ofstream outSic;
-ofstream outLis;
+ofstream outSic; //outputs to file
+ofstream outLis; //outputs to file
 
 void dxe::openF(string file)
 {
@@ -56,7 +56,8 @@ void dxe::openF(string file)
 
 void dxe::storeVector()
 {       
-        // Buffer to store line by line of file
+        // Buffer to store line by line of file, each line of the object file will load in
+        // as a separate element in the vector.
         string buffer;
         while(inObj.good())
         {
@@ -65,6 +66,8 @@ void dxe::storeVector()
         }
 
         string buffer2;
+        //Similar to before, we load the .sym into a vector, however the .sym contains both the 
+        // SYMTAB and the LITTAB, so we split those into their own respective vectors for storage
         while(inSym.good())
         {
                 getline(inSym, buffer2);
@@ -139,28 +142,36 @@ int dxe::formatFinder(int currRow, int currPlace){
                         format2(instructTable, currInst, currRow, currPlace);
                         break;
                 case 3:
+                        //format 3 is the only reader that can return a value due to the fact
+                        //that it handles both format 3 and 4 in the same functions
+                        //the nixpbe flags need to kept for the remainder of the program
                         flagReturn = format3(instructTable, currInst, currRow, currPlace);
                         break;
         }
         return (flagReturn * 2);
 }
 
+// format 1 accepts the opcode table, the current instruction being evaluated, the row of the object record
+// and the place within that record where the instruction was found
 void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) { 
     string opName = instTable.getName(currInst);
 
-    for (int i = 0; i < symTable.size() - 1; i++) { //check if symbol name should be inserted
+    //Reference the SYMTAB to check if the currently looked at address matches a symbol in the table
+    for (int i = 0; i < symTable.size() - 1; i++) { 
         if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {  //currAddress
             outSic << setw(8) << left << (unsigned int)strtol( symTable[i].substr(0,6).c_str() , NULL, 16);
             outLis << setw(8) << left << (unsigned int)strtol( symTable[i].substr(0,6).c_str() , NULL, 16);
             break;
         }
+        // load opcode name into the outstream
         else if (i + 1 >= symTable.size() - 1) {
-            outSic << "         " << setw(7) << left << opName;  //not sure on opName
+            outSic << "         " << setw(7) << left << opName;  
             outLis << "         " << setw(7) << left << opName;
         }
     }
 
-    for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
+    //Reference the LITTAB to check if the currenly looked at address matches a literal in the table
+    for (int i = 0; i < litTable.size(); i++) { 
         if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16)) {
             outSic << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16) << endl;
             outSic << setw(14) << right << "LTORG" << endl;
