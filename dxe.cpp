@@ -265,6 +265,119 @@ void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
     }
 }
 
+int dxr::format3(opcode instTable, int currInst, int currRow, int currPlace) {
+    string opName = instTable.getName(opCode);
+    bool nixbpe[6];
+    int flagSection = (int)strtol(objStorage[currRow].substr(current+1, 2).c_str(), NULL, 16);
+    for (int i = 0; i < 6; i++)           //set flags bits for nixbpe
+        nixbpe[i] = instTable.getBit(flagSection, 5-i);
+
+    unsigned int instruction = (unsigned int)strtol(objStorage[currRow].substr(current, 2*(3+nixbpe[5])).c_str(), NULL, 16);
+    for (int i = 0; i < symValues.size()-1; i++) { //check if symbol name should be inserted
+        if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {
+            outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
+            outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
+            break;
+        }
+        else if (i+1 >= symValues.size()-1) {
+            outSic << "        ";
+            outLis << "        ";
+        }
+    }
+
+    for (int i = 0; i < litNames.size(); i++) { //check if literal should be inserted
+        if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16)) {
+            int literal = (int)strtol(objStorage[row].substr(current+(2*(3+nixbpe[5])), litLengths[i]).c_str(), NULL, 16);
+            outSic << (nixbpe[5] ? "+":" "); //insert a "+" if extended format
+            outSic << setw(7) << opName << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16) << endl;
+            outSic << setw(14) << right << "LTORG" << endl;
+            outLis << (nixbpe[5] ? "+":" "); //insert a "+" if extended format
+            outLis << setw(7) << left << opName << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16);
+            outLis << setfill('0') << right << setw(2*(3+nixbpe[5])) << instruction << setfill(' ') << endl;
+            outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << "  ";
+            outLis << setw(14) << right << "LTORG" << "            " << literal << endl;
+            return (3 + (litLengths[i]/2));
+        }
+    }
+
+    outSic << (nixbpe[5] ? "+":" "); //insert a "+" if extended format
+    outLis << (nixbpe[5] ? "+":" ");
+
+    unsigned int targetAddress = 0;
+    if (nixbpe[5]) {                    //check for extended format and put displacement field into targetAddress
+        targetAddress = (unsigned int)strtol(objStorage[row].substr(current, 8).c_str(), NULL, 16);
+        targetAddress &= 0x000FFFFF;
+    }
+    else {
+        targetAddress = (unsigned int)strtol(objStorage[row].substr(current, 6).c_str(), NULL, 16);
+        targetAddress &= 0x000FFF;
+    }
+
+    if (nixbpe[3]) {        //base relative
+        targetAddress += baseAddress;
+    }
+    else if (nixbpe[4]) {   //PC relative
+        targetAddress += (currAddress + 3);
+    }
+
+    if (opName == "J" || opName == "JEQ" || opName == "JGT" || opName == "JLT" || opName == "JSUB") {
+        targetAddress &= (nixbpe[5] ? 0x000FFFFF:0x000FFF);
+    }
+
+    if (nixbpe[0] == nixbpe[1]) {   // simple addressing
+        outSic << setw(8) << left << opName;
+        outLis << setw(8) << left << opName;
+
+        for (int i = 0; i < symValues.size(); i++) { //insert symbol name
+            if (targetAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16) && opName != "RSUB") {
+                outSic << setw(9) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16) + (nixbpe[2] ? ",X":"") << endl;
+                outLis << setw(9) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16) + (nixbpe[2] ? ",X":"");
+                break;
+            }
+        }
+        if (opName == "RSUB") {
+            outSic << endl;
+            outLis << "         ";
+        }
+    }
+    else if (nixbpe[0]) {   //indirect addressing
+        outSic << setw(7) << left << opName << "@";
+        outLis << setw(7) << left << opName << "@";
+        for (int i = 0; i < symValues.size(); i++) { //insert symbol name
+            if (targetAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16) && opName != "RSUB") {
+                outSic << setw(9) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16) + (nixbpe[2] ? ",X":"") << endl;
+                outLis << setw(9) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16) + (nixbpe[2] ? ",X":"");
+                break;
+            }
+        }
+    }
+    else {                  //immediate addressing`
+        outSic << setw(7) << left << opName << "#";
+        outLis << setw(7) << left << opName << "#";
+        if (!nixbpe[5]) {
+            outSic << targetAddress << endl;
+            outLis << setw(9) << targetAddress;
+        }
+    }
+
+    if (opName == "LDB") {
+        baseAddress = targetAddress;
+        for (int i = 0; i < symValues.size(); i++) { //check if symbol name should be inserted
+            if (targetAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {
+                outSic << setw(10) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16) << endl;
+                outSic << setw(17) << right << "BASE    " << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16) << endl;
+                outLis << setw(9) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
+                outLis << setw(2*(3+nixbpe[5])) << setfill('0') << instruction << setfill(' ') << endl;
+                outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << "  ";
+                outLis << setw(17) << right << "BASE    " << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16) << endl;
+                return (3+nixbpe[5]);
+            }
+        }
+    }
+    outLis << right << setfill('0') << setw(2*(3+nixbpe[5])) << instruction << setfill(' ') << endl;
+    return (3+nixbpe[5]);
+}
+
 
 void dxe::headerReader(int textRow)
 {
