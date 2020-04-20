@@ -438,12 +438,13 @@ void dxe::checkSymTab(){
                         if ((currAddress % 3)){
                                 outSic << setw(8) << left << symName << " RESW    ";
                                 outLis << setw(8) << left << symName << " RESW    ";
-
+                                // if the next value is past the size of SYMTAB then we will finish up the line for that entry
                                 if(i+1 < symTable.size()){
                                         outSic << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr)/3 << endl;
                                         outLis << setbase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr)/3 << setbase(16) << endl;
                                         currAddress += (unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16) - symAddr;
                                 }
+                                // if not then we continue on and update the address 
                                 else{
                                         outSic << setw(8) << left << (programLength - symAddr)/3 << endl;
                                         outLis << setbase(10) << setw(8) << left << (programLength - symAddr)/3 << setbase(16) << endl;
