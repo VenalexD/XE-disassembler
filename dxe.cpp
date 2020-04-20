@@ -26,17 +26,16 @@ void dxe::openF(string file)
         string lisF = file + ".lis";    // Adds lis extension to source file
 
         inObj.open(objF);
+
         // If no .obj file is opened, either does NOT exist or NOT readable
-        if(!inObj)
-        {
+        if(!inObj){
                 cout << "Unable to open file: " << objF << endl;
                 exit(EXIT_FAILURE);
         }
 
         inSym.open(symF);
         // If no .sym file is opened, either does NOT exist or NOT readable
-        if(!inSym)
-        {
+        if(!inSym){
                 cout << "Unable to open file: " << symF << endl;
                 exit(EXIT_FAILURE);
         }
@@ -59,39 +58,36 @@ void dxe::storeVector()
         // Buffer to store line by line of file, each line of the object file will load in
         // as a separate element in the vector.
         string buffer;
-        while(inObj.good())
-        {
+        while(inObj.good()){
                 getline(inObj, buffer);
                 objVector.push_back(buffer);    // Stores .obj file contents into vector
         }
 
         string buffer2;
-        //Similar to before, we load the .sym into a vector, however the .sym contains both the 
+        // Similar to before, we load the .sym into a vector, however the .sym contains both the 
         // SYMTAB and the LITTAB, so we split those into their own respective vectors for storage
-        while(inSym.good())
-        {
+        while(inSym.good()){
                 getline(inSym, buffer2);
-                getline(inSym, buffer2);
-                getline(inSym, buffer2);
-                while(buffer2.length() != 0)
-                {
-                        symTable.push_back(buffer2);    // Stores symbol table lines into vector//
-                        getline(inSym, buffer2);
-                }
-
-
+                symVector.push_back(buffer2);
         }
 
-        while(inSym.good())
-        {
-                getline(inSym, buffer2);
-                getline(inSym, buffer2);
-                getline(inSym, buffer2);
-                while(buffer2.length() != 0)
-                {
-                        litTable.push_back(buffer2);    // Stores symbol table lines into vector
-                        getline(inSym, buffer2);
-                }      
+        // This sequence will split the contents of the symbol vector into individual vectors
+        // that will store the SYMTAB and the LITTAB
+        int index = 2;
+        for(index = 2; index < symVector.size()-1; index++){
+            // will load every line of the symbol file into the SYMTAB vector until it reaches a break
+            if(symVector[index][0] != (char)NULL){
+                symTable.push_back(symVector[index]);
+            }
+            else{
+                // skips down to the LITTAB 
+                index += 3;
+                break;
+            }
+        }
+        // will load all LITTAB lines of the symVector into the LITTAB vector
+        for(int jndex = index; jndex < symVector.size()-1; jndex++){
+            litTable.push_back(symVector[jndex]);
         }
 }
 
@@ -464,6 +460,7 @@ void dxe::checkSymTab(){
                         }
         }
 }
+
 void dxe::modReader(int textRow){     //M XXXXXX YY
 
 	int i = 0;
