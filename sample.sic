@@ -1,0 +1,8 @@
+SUM      START   0
+FIRST    RESB    11      
+LOOP     RESB    13      
+COUNT    RESB    3       
+TABLE    RESW    7d0     
+TABLE2   RESW    7d0     
+TOTAL    RESW    1       
+         END     FIRST 

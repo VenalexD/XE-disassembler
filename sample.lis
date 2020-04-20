@@ -1,0 +1,8 @@
+0000  SUM      START  0
+0000  FIRST    RESB    11      
+0003  LOOP     RESB    19      
+0009  COUNT    RESB    3       
+000A  TABLE    RESW    2000    
+177A  TABLE2   RESW    2000    
+2EEA  TOTAL    RESW    1       
+               END     FIRST 

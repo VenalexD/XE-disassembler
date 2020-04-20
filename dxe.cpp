@@ -408,15 +408,21 @@ void dxe::headerReader(int textRow)
 }
 
 void dxe::textReader(int textRow){
+        // this will fetch the lenghth of the text record so the format finder knows how many times
+        // it needs to run for each instruction
         int textLen = (int)strtol( objVector[textRow].substr(7,2).c_str(), NULL, 16 );
         // op codes will always start at least in location 9 on text record
         int curr = 9;
+        // this loop will carry the sequence of calling format finder to then call the correct
+        // format reader for each instruction
         while(curr < (2* textLen + 9)){
                 int size = formatFinder(textRow, curr);
                 currAddress += (size/2);
                 curr += size;
         }
 
+        //once all formats have been handles we will reference the SYMTAB and the LITTAB using the
+        // checkSymTab function
         checkSymTab();
 }
 
