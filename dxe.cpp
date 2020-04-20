@@ -102,7 +102,7 @@ void dxe::recordFinder()
                                 headerReader(i);
                                 break;
                         case 'T': 
-                                //textReader(i);
+                                textReader(i);
                                 break;
                         case 'M':
                                 modReader(i);
@@ -121,7 +121,7 @@ int dxe::formatFinder(int currRow, int currPlace){
         //instatiate a new instruction table
         opcode instructTable = *new opcode;
         int flagReturn;
-        //pull the first two bytes from the current row and the current place.
+        //pull the first two bytes from the currPlace row and the currPlace place.
         int currInst = (int)strtol(objVector[currRow].substr(currPlace,2).c_str(),NULL,16);
         
         //call the .getFormat table from the instruction table class to fetch the format of the instruction
@@ -150,8 +150,8 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
 
     for (int i = 0; i < symTable.size() - 1; i++) { //check if symbol name should be inserted
         if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {  //currAddress
-            outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16));
-            outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16));
+            outSic << setw(8) << left << (unsigned int)strtol( symTable[i].substr(0,6).c_str() , NULL, 16);
+            outLis << setw(8) << left << (unsigned int)strtol( symTable[i].substr(0,6).c_str() , NULL, 16);
             break;
         }
         else if (i + 1 >= symTable.size() - 1) {
@@ -161,10 +161,10 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
     }
 
     for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
-        if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16))) {
-            outSic << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16))) << endl;
+        if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16)) {
+            outSic << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16) << endl;
             outSic << setw(14) << right << "LTORG" << endl;
-            outLis << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16))) << endl;
+            outLis << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16) << endl;
             outLis << setw(14) << right << "LTORG" << endl;
             return;
         }
@@ -172,13 +172,13 @@ void dxe::format1(opcode instTable, int currInst, int CurrRow, int currPlace) {
 }
 
 
-void dxe::format2(opcode instTable, int currInst, int CurrRow, int currPlace) {
+void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
     string opName = instTable.getName(currInst);
 
     for (int i = 0; i < symTable.size()-1; i++) { //check if symbol name should be inserted
-        if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16))) {
-        	outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16));
-            outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16));
+        if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {
+            outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
+            outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
             break;
         }
         else if (i+1 >= symTable.size()-1) {
@@ -188,16 +188,16 @@ void dxe::format2(opcode instTable, int currInst, int CurrRow, int currPlace) {
     }
 
     for (int i = 0; i < litTable.size(); i++) { //check if literal should be inserted
-        if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16))) {
-            outSic << setw(10) << left <<(unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16)))<< endl;
+        if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16)) {
+            outSic << setw(10) << left <<(unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16)<< endl;
             outSic << setw(14) << right << "LTORG" << endl;
-            outLis << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16))) << endl;
+            outLis << setw(10) << left << (unsigned int)strtol(litTable[i].substr(8, 6).c_str(), NULL, 16) << endl;
             outLis << setw(14) << right << "LTORG" << endl;
             return;
         }
     }
-    int r1 = (int)strtol(objStorage[row].substr(current+2, 1).c_str(), NULL, 16);
-    int r2 = (int)strtol(objStorage[row].substr(current+3, 1).c_str(), NULL, 16);
+    int r1 = (int)strtol(objVector[currRow].substr(currPlace+2, 1).c_str(), NULL, 16);
+    int r2 = (int)strtol(objVector[currRow].substr(currPlace+3, 1).c_str(), NULL, 16);
 
     switch (r1) {           //output register name for first register operand
         case 0:
@@ -288,7 +288,7 @@ void dxe::headerReader(int textRow)
 }
 
 void dxe::textReader(int textRow){
-        int textLen = (int)strtol(objVector[textRow].substr(7,2).c_str, NULL, 16);
+        int textLen = (int)strtol( objVector[textRow].substr(7,2).c_str(), NULL, 16 );
         // op codes will always start at least in location 9 on text record
         int curr = 9;
         while(curr < (2* textLen + 9)){
@@ -302,12 +302,11 @@ void dxe::textReader(int textRow){
 
 void dxe::checkSymTab(){
         for (int i =0; i < symTable.size(); i++){
-                //fetch the address of the ith symbol in the Symbol Table
-                unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16));
                 //fetch the name of the ith symbol in the Symbol Table
                 string symName = symTable[i].substr(0,6);
-                //check if the current address is the same as a symbol in the Symbol Table
+                //fetch the address of the ith symbol in the Symbol Table
                 unsigned int symAddr = (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16);
+                //check if the currPlace address is the same as a symbol in the Symbol Table
                 if(currAddress <= symAddr)
                         outLis << setfill('0') << setw(4) << right << currAddress << setfill(' ') << "  ";
                         if ((currAddress % 3)){
@@ -315,12 +314,12 @@ void dxe::checkSymTab(){
                                 outLis << setw(8) << left << symName << " RESW    ";
 
                                 if(i+1 < symTable.size()){
-                                        outSic << set(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr)/3 << endl;
-                                        outLis << setbase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr)/3 << setbase(16) << endl;
-                                        currAddress += (unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16) - symAddr;
+                                        outSic << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr)/3 << endl;
+                                        outLis << setbase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr)/3 << setbase(16) << endl;
+                                        currAddress += (unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16) - symAddr;
                                 }
                                 else{
-                                        outSic << setw(8) << left << (programLength - symAddr)/3 < endl;
+                                        outSic << setw(8) << left << (programLength - symAddr)/3 << endl;
                                         outLis << setbase(10) << setw(8) << left << (programLength - symAddr)/3 << setbase(16) << endl;
                                         currAddress += (programLength - symAddr);
                                 }
@@ -329,14 +328,14 @@ void dxe::checkSymTab(){
                                 outSic << setw(8) << left << symName << " RESB    ";
                                 outLis << setw(8) << left << symName << " RESB    ";
                                 if( i+1 < symTable.size()){
-                                        outSic << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr) << setbase(16) << endl;
-                                        outLis << setbase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr) << setbase(16) << endl;
-                                        currAddress += ((((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr))/3;
+                                        outSic << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr) << setbase(16) << endl;
+                                        outLis << setbase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr) << setbase(16) << endl;
+                                        currAddress += ((((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr))/3;
                                 }
                                 else{
                                         outSic << setw(8) << left << (programLength - symAddr)/3 << endl;
-                                        outLis << setBase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr) << setbase(16) << endl;
-                                        currAddress += (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str, NULL,16))- symAddr) / 3;
+                                        outLis << setbase(10) << setw(8) << left << (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr) << setbase(16) << endl;
+                                        currAddress += (((unsigned int)strtol(symTable[i+1].substr(8,6).c_str(), NULL,16))- symAddr) / 3;
                                 }
                         }
         }
@@ -375,7 +374,7 @@ void dxe::endReader(int textRow) {
     unsigned int eAddress = (unsigned int)strtol(objVector[textRow].substr(1, 6).c_str(), NULL, 16);
     //check the symbol value vector table for the address of the front instruction
     for (int i = 0; i < symTable.size(); i++) 
-        if (eAddress == symTable[i]) {
+        if (eAddress == (unsigned int)strtol(symTable[i].substr(8, 6).c_str(), NULL, 16)) {
             //makes room in the Sic stream for the next packet on information
             outSic << "         " << setw(8) << left << "END" << symTable[i].substr(0,6) << endl;
             //makes room in the Lis stream for the next packet on information
