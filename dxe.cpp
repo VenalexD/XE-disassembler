@@ -13,10 +13,10 @@ Filename: dxe.cpp
 #include <map>
 #include "dxe.h"
 
-ifstream inObj;
-ifstream inSym;
-ofstream outSic; //outputs to file
-ofstream outLis; //outputs to file
+ifstream inObj;  //input stream for .obj
+ifstream inSym;  //input stream for .sym
+ofstream outSic; //outputs to file .sic
+ofstream outLis; //outputs to file .lis
 
 void dxe::openF(string file)
 {
@@ -203,10 +203,14 @@ void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
             return;
         }
     }
+    // we will then place values in for registers 1 and two by referencing the current location
+    // we are looking at.
     int r1 = (int)strtol(objVector[currRow].substr(currPlace+2, 1).c_str(), NULL, 16);
     int r2 = (int)strtol(objVector[currRow].substr(currPlace+3, 1).c_str(), NULL, 16);
 
-    switch (r1) {           // Checks value from register 1 to assign name
+    // we then validate the entries for each register and specify which register is being access in
+    // the output files.
+    switch (r1) {           
         case 0:
         	outSic << "A,";
             outLis << "A,";
@@ -238,7 +242,7 @@ void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
         default:
             break;
     }
-    switch (r2) {           // Checks value from register 2 to assign name
+    switch (r2) {           
         case 0:
             outSic << "A" << endl;
             outLis << "A" << endl;
@@ -274,13 +278,18 @@ void dxe::format2(opcode instTable, int currInst, int currRow, int currPlace) {
 
 int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
     string opName = instTable.getName(currInst);
+    // the nixbpe array will be a series of boolean values that will flag whether an instruction is indirect
+    // immediate, indexed, base relative, pc relative or extended.
     bool nixbpe[6];
     int flagSection = (int)strtol(objVector[currRow].substr(currPlace+1, 2).c_str(), NULL, 16);
     for (int i = 0; i < 6; i++)           // Loops through each flag of nixbpe and assigns value
         nixbpe[i] = instTable.getBit(flagSection, 5-i);
-
+    // we will retrieve the instruction address location for the currently evaluated instruction and pass it
+    // through the loop
     unsigned int instruction = (unsigned int)strtol(objVector[currRow].substr(currPlace, 2*(3+nixbpe[5])).c_str(), NULL, 16);
     for (int i = 0; i < symTable.size()-1; i++) { // Loops through symTable vector to check if a symbol name matches current address
+
+        //Check if the currently looked at instruction is in the SYMTAB
         if (currAddress == (unsigned int)strtol(symTable[i].substr(8,6).c_str(), NULL, 16)) {
             outSic << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
             outLis << setw(8) << left << (unsigned int)strtol(symTable[i].substr(0,6).c_str(), NULL, 16);
@@ -291,7 +300,7 @@ int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
             outLis << "        ";
         }
     }
-
+    // check if the currently looked at instruction is in the LITTAB
     for (int i = 0; i < litTable.size(); i++) { // Loops through litTable to check if a literal matches current address
         if (currAddress == (unsigned int)strtol(litTable[i].substr(24, 6).c_str(), NULL, 16)) {
             int literal = (int)strtol(objVector[currRow].substr(currPlace+(2*(3+nixbpe[5])), (unsigned int)strtol(litTable[i].substr(16, 6).c_str(), NULL, 16)).c_str(), NULL, 16);
@@ -307,6 +316,7 @@ int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
         }
     }
 
+    // we then check for format 4 type instructions by checking what the 'e' flag in the nixbpe array is set to
     outSic << (nixbpe[5] ? "+":" "); //insert a "+" if extended format
     outLis << (nixbpe[5] ? "+":" ");
 
@@ -326,7 +336,7 @@ int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
     else if (nixbpe[4]) {   //PC relative
         targetAddress += (currAddress + 3);
     }
-
+    //we account for all jumps possible within the instruction and set the address equal to those values
     if (opName == "J" || opName == "JEQ" || opName == "JGT" || opName == "JLT" || opName == "JSUB") {
         targetAddress &= (nixbpe[5] ? 0x000FFFFF:0x000FFF);
     }
@@ -382,6 +392,8 @@ int dxe::format3(opcode instTable, int currInst, int currRow, int currPlace) {
         }
     }
     outLis << right << setfill('0') << setw(2*(3+nixbpe[5])) << instruction << setfill(' ') << endl;
+    // we return the result of the format back to the formatFinder so it can be passed through to the rest of the
+    // text reader
     return (3+nixbpe[5]);
 }
 

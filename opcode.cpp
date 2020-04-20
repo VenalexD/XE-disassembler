@@ -31,23 +31,34 @@ const struct code instTable [] = {				//structure of usable commands
     {"TIO", 1, 0xF8},  {"TIX", 3, 0x2C},    {"TIXR", 2, 0xB8},   {"WD", 3, 0xDC}
 };
 
+// using a bitwise & operation we can pass through the opcode and findout
+// what the opcode is that matches the instruction
+// 05 = 0000 0101 &
+// FC = 1111 1100
+//      0000 0000 => LDA, Format 3
+// 
 string opcode::getName(int opCode) {
     for (int i = 0; i < SIZE; i++)
         if (instTable[i].opCode == opCode)
-            return instTable[i].name;										//05    0000 0101
-    int newOpCode = opCode & 0xFC;      	//allows us to get the NAME       FC	1111 1100
-    return getName(newOpCode);											//00	0000 0000   => LDA, Format 3
+            return instTable[i].name;										
+    int newOpCode = opCode & 0xFC;      	       
+    return getName(newOpCode);											
 }
-
-int opcode::getFormat(int opCode) {											//05    0000 0101
-    opCode = opCode & 0xFC;      			//allows us to get the FORMAT     FC	1111 1100
-    for (int i = 0; i < SIZE; i++)										    //04	0000 0100   => LDX, Format 3
+// we perform a similar operation to finding the opcode, but the result of this function
+// will return the format of the opcode being passed.
+int opcode::getFormat(int opCode) {											
+    opCode = opCode & 0xFC;      			   
+    for (int i = 0; i < SIZE; i++)										   
         if (instTable[i].opCode == opCode)
             return instTable[i].format;
     return 0;
 }
 
-bool opcode::getBit(int input, int position) {		//fills nixbpe for format 3/4 in Format 3 function
+// this function will be called repeatedly when evaluating the nixbpe flags
+// we will pass through a position tracker that will shift the input over
+// until all bits have been shifted and we get a resulting value for 
+// the nixbpe array
+bool opcode::getBit(int input, int position) {		
     return ((input >> position) & 1);
 }
 
