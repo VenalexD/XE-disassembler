@@ -1,23 +1,20 @@
-###########################################################
-#
-# Authors: Alex Gonzalez, Juan Pina-Sanz, Mikhail Mineev, Mark Khoury
-# Users: cssc1967, cssc1923, cssc1921, cssc1964
-# Class: CS 530, Spring 2020
-# Assignment 2, XE Dissasembler
-# Filename: Makefile
-#
-###########################################################
-EXEC = dxe
-FILES = main.cpp dxe.cpp opcode.cpp
 CC = g++
-LFLAGS = -lm -o
-CFLAGS = -lm -o
+CFLAGS = -c
+TARGET = dxe
 
-$(EXEC):$(FILES)
-	$(CC) $(FILES) $(LFLAGS) $(EXEC) 
+all: $(TARGET)
+
+$(TARGET): main.o dxe.o opcode.o
+	$(CC) main.o dxe.o opcode.o -o $(TARGET)
+
+main.o: main.cpp
+	$(CC) $(CFLAGS) main.cpp
+
+dxe.o: dxe.cpp
+	$(CC) $(CFLAGS) dxe.cpp
+
+opcode.o: opcode.cpp
+	$(CC) $(CFLAGS) opcode.cpp
 
 clean:
-	rm -f *.o $(EXEC)
-
-.PHONY: all dxe clean
-#######################[ EOF: Makefile ]###################
+	rm -f core *.o $(TARGET)
